@@ -1,12 +1,11 @@
 package command_bridge
 
 import (
-	"fmt"
 	"github.com/leddzip/raft/internal/service"
 	"log"
 )
 
-func Run() {
+func Run(target string) {
 
 	// ======================================================================
 	// Assert we are in a Raft manged folder in order to execute this command
@@ -20,11 +19,26 @@ func Run() {
 	}
 
 	// =====================================================================
-	// do something since the first assertion succeeded
+	// check if target is a valid candidate
 	raftScriptFolderLocation, err := service.GetRaftManagedFolder()
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-	fmt.Printf("Raft script folder location: %s", raftScriptFolderLocation)
 
+	isValidCandidate, err := service.CheckCandidateExist(target, raftScriptFolderLocation)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	if !isValidCandidate {
+		log.Fatalf("Candidate '%s' is not a valid target.", target)
+	}
+
+	// =====================================================================
+	// parse and execute the target
+	allTargets, err := service.GetCandidateMap(raftScriptFolderLocation)
+	err = service.Run(allTargets[target].Name())
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
