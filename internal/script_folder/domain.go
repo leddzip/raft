@@ -1,12 +1,12 @@
 package script_folder
 
 import (
-	back_finder "github.com/leddzip/back-finder"
+	backfinder "github.com/leddzip/back-finder"
 	"os"
 )
 
 func GetAppManagedFolder(folderNameToRetrieve string, fromFolder string, backToFolder string) (string, error) {
-	filePresence, err := back_finder.FindFileBetween(folderNameToRetrieve, fromFolder, backToFolder)
+	filePresence, err := backfinder.FindFileBetween(folderNameToRetrieve, fromFolder, backToFolder)
 	if err != nil {
 		return "", NewUnexpectedFolderErrorf("cannot assert if the folder '%s' exist or not", folderNameToRetrieve)
 	}
