@@ -1,6 +1,7 @@
 package command_bridge
 
 import (
+	"github.com/leddzip/raft/internal/script_folder"
 	"github.com/leddzip/raft/internal/service"
 	"log"
 )
@@ -41,4 +42,8 @@ func Run(target string) {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+}
+
+func getCandidate(candidateName string) (*script_folder.CandidateWithContent, error) {
+	return nil, nil
 }

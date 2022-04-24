@@ -60,12 +60,34 @@ func GetAllCandidates(scriptSource string) ([]Candidate, error) {
 	return candidates, nil
 }
 
+// GetCandidateWithContentIfExist return a candidate with content if it exists among
+// the list of existing candidate. The given candidateName should be the actual file name
+// without the extension.
+func GetCandidateWithContentIfExist(candidateList []Candidate, candidateName string) (*CandidateWithContent, error) {
+	for _, candidate := range candidateList {
+		if candidate.Name == candidateName {
+			content, err := os.ReadFile(candidate.Path)
+			if err != nil {
+				return nil, NewUnexpectedFolderErrorf("Unable to read content of file '%s'. %s", candidate.Path)
+			}
+			candidateWithContent := &CandidateWithContent{
+				Path:     candidate.Path,
+				FileName: candidate.FileName,
+				Name:     candidate.Name,
+				Content:  content,
+			}
+			return candidateWithContent, nil
+		}
+	}
+	return nil, NewNoSuchCandidateErrorf("Unable to find candidate with name '%s'", candidateName)
+}
+
 // isValidCandidateExtension check if the given file name (with extension),
 // is a valid candidate. To be a valid candidate, it should be a yaml file
 // (either ending with .yaml or .yml).
-func isValidCandidateExtension(candidateName string) bool {
+func isValidCandidateExtension(candidateFilaName string) bool {
 	allowedExtensionCandidate := []string{".yaml", ".yml"}
-	return sliceContainsString(&allowedExtensionCandidate, filepath.Ext(candidateName))
+	return sliceContainsString(&allowedExtensionCandidate, filepath.Ext(candidateFilaName))
 }
 
 // sliceContainsString return true if the slice contains the given string.

@@ -42,3 +42,23 @@ func NewNotAnAppManagedFolderErrorf(format string, v ...any) error {
 		Message: fmt.Sprintf(format, v...),
 	}
 }
+
+// NoSuchCandidateError is an error used to tell the user that
+// the wanted candidate does not exist
+type NoSuchCandidateError struct {
+	Message string
+}
+
+func (err *NoSuchCandidateError) Error() string {
+	return err.Message
+}
+
+func NewNoSuchCandidateError(message string) error {
+	return &NoSuchCandidateError{Message: message}
+}
+
+func NewNoSuchCandidateErrorf(format string, v ...any) error {
+	return &NoSuchCandidateError{
+		Message: fmt.Sprintf(format, v...),
+	}
+}
