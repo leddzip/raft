@@ -2,8 +2,10 @@ package script_folder
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"path"
+	"path/filepath"
 	"testing"
 )
 
@@ -160,6 +162,7 @@ func TestIsValidCandidateExtension_whenIsNotValid(t *testing.T) {
 	}
 
 	for _, candidate := range candidateNames {
+		fmt.Printf("candidate: %s, ext: %s", candidate, filepath.Ext(candidate))
 		t.Run("assert that each candidate is not valid", func(t *testing.T) {
 			// When
 			result := isValidCandidateExtension(candidate)
@@ -188,5 +191,40 @@ func TestGetAllCandidates_whenOnlyActualCandidatesExists(t *testing.T) {
 	if len(candidates) != 3 {
 		t.Errorf("Invalid number of retrieved candidates. Expected %d, got %d", 3, len(candidates))
 	}
+}
 
+func TestGetAllCandidates_whenMixOfCandidatesAndOthers(t *testing.T) {
+	// Given
+	const WithMixOfCandidatesAndOthers string = "with-mix-of-candidates-and-others"
+	scenarioTestSource := path.Join(GetAllCandidatesTestSource, WithMixOfCandidatesAndOthers)
+
+	// When
+	candidates, err := GetAllCandidates(scenarioTestSource)
+
+	// Then
+	if err != nil {
+		t.Errorf("Unexpected error occured: %s", err.Error())
+	}
+
+	if len(candidates) != 3 {
+		t.Errorf("Invalid number of retrieved candidates. Expected %d, got %d", 3, len(candidates))
+	}
+}
+
+func TestGetAllCandidates_whenNoCandidateExists(t *testing.T) {
+	// Given
+	const WithoutCandidate string = "without-any-candidate"
+	scenarioTestSource := path.Join(GetAllCandidatesTestSource, WithoutCandidate)
+
+	// When
+	candidates, err := GetAllCandidates(scenarioTestSource)
+
+	// Then
+	if err != nil {
+		t.Errorf("Unexpected error orccured: %s", err.Error())
+	}
+
+	if len(candidates) != 0 {
+		t.Errorf("Invalid number of retrieved candidates. Expected %d, got %d", 0, len(candidates))
+	}
 }

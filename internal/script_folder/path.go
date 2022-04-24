@@ -64,9 +64,8 @@ func GetAllCandidates(scriptSource string) ([]Candidate, error) {
 // is a valid candidate. To be a valid candidate, it should be a yaml file
 // (either ending with .yaml or .yml).
 func isValidCandidateExtension(candidateName string) bool {
-	allowedExtensionCandidate := []string{"yaml", "yml"}
-	nameSliced := strings.Split(candidateName, ".")
-	return sliceContainsString(&allowedExtensionCandidate, nameSliced[len(nameSliced)-1])
+	allowedExtensionCandidate := []string{".yaml", ".yml"}
+	return sliceContainsString(&allowedExtensionCandidate, filepath.Ext(candidateName))
 }
 
 // sliceContainsString return true if the slice contains the given string.
