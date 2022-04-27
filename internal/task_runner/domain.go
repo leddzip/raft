@@ -9,13 +9,14 @@ type Job interface {
 	Name() string
 	Description() string
 	Tasks() []Task
+	Run() error
 }
 
 // Task is the fundamental execution unit. Whatever the actual runner (shell, docker
 // or something else).
 type Task interface {
 	Type() RunnerType
-	Execute()
+	Execute() error
 	Validate() error
 }
 

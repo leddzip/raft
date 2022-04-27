@@ -9,11 +9,11 @@ type YamlJob struct {
 }
 
 type YamlTask struct {
-	Type        string  `yaml:"type"`
+	Type        *string `yaml:"type,omitempty"`
 	Name        string  `yaml:"name"`
 	Description string  `yaml:"runner"`
 	Command     *string `yaml:"command,omitempty"`
-	Shell       *string `yaml:"shell"`
+	Shell       *string `yaml:"shell,omitempty"`
 }
 
 func (yamlTask *YamlTask) toTask() (Task, error) {

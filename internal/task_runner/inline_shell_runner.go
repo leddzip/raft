@@ -1,5 +1,7 @@
 package task_runner
 
+import "fmt"
+
 type InlineShellRunnerTask struct {
 	Name        string
 	ShellRunner string
@@ -9,7 +11,7 @@ type InlineShellRunnerTask struct {
 // isInlineShellRunner verify if the given YamlTask is a InlineShellRunnerTask candidate.
 // To be a candidate, the YamlTask should have its type to "shell-runner" and a non nil Command.
 func isInlineShellRunner(task *YamlTask) bool {
-	return task.Type == "shell-runner" && task.Command != nil
+	return *task.Type == "shell-runner" && task.Command != nil
 }
 
 // NewInlineShellRunnerTask return a new InlineShellRunnerTask, which is an instance of Task.
@@ -30,8 +32,9 @@ func NewInlineShellRunnerTask(task *YamlTask) *InlineShellRunnerTask {
 	}
 }
 
-func (task *InlineShellRunnerTask) Execute() {
-
+func (task *InlineShellRunnerTask) Execute() error {
+	fmt.Printf("%s\n", task.Command)
+	return nil // TODO replace with actual content
 }
 
 func (task *InlineShellRunnerTask) Validate() error {

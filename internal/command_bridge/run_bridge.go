@@ -2,46 +2,41 @@ package command_bridge
 
 import (
 	"github.com/leddzip/raft/internal/script_folder"
-	"github.com/leddzip/raft/internal/service"
-	"log"
+	"github.com/leddzip/raft/internal/task_runner"
 )
 
-func Run(target string) {
+func Run(targetName string) error {
 
-	// ======================================================================
-	// Assert we are in a Raft manged folder in order to execute this command
-	inRaftManagedFolder, err := service.IsInRaftManagedFolder()
+	// Assert we are in a folder managed by the application
+	scriptFolder, err := script_folder.GetAppManagedFolder("raft", ".", "/")
 	if err != nil {
-		log.Fatal(err.Error())
+		return err // to replace with an actual error that illustrate an issue while running the application
 	}
 
-	if !inRaftManagedFolder {
-		log.Fatal("You are not currently inside a raft managed folder.")
-	}
-
-	// =====================================================================
-	// check if target is a valid candidate
-	raftScriptFolderLocation, err := service.GetRaftManagedFolder()
+	// Retrieve candidate
+	allCandidates, err := script_folder.GetAllCandidates(scriptFolder)
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
 
-	isValidCandidate, err := service.CheckCandidateExist(target, raftScriptFolderLocation)
+	runnerCandidate, err := script_folder.GetCandidateWithContentIfExist(allCandidates, targetName)
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
 
-	if !isValidCandidate {
-		log.Fatalf("Candidate '%s' is not a valid target.", target)
-	}
-
-	// =====================================================================
-	// parse and execute the target
-	allTargets, err := service.GetCandidateMap(raftScriptFolderLocation)
-	err = service.Run(allTargets[target].Name())
+	// Infer correct Job from candidate
+	job, err := task_runner.Parse(runnerCandidate.Content)
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
+
+	err = job.Run()
+	if err != nil {
+		return err
+	}
+
+	// Run the job
+	return nil
 }
 
 func getCandidate(candidateName string) (*script_folder.CandidateWithContent, error) {

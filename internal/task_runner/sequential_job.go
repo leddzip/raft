@@ -36,6 +36,16 @@ func (job *SequentialJob) Tasks() []Task {
 	return job.tasks
 }
 
+func (job *SequentialJob) Run() error {
+	for _, task := range job.tasks {
+		if err := task.Execute(); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // NewSequentialJob create a new SequentialJob based on a YamlJob.
 // It takes care of the mapping of its tasks implicitly (as long as the
 // YamlTask can be mapped to a valid Task using the '(yamlTask *YamlTask) toTask()'
