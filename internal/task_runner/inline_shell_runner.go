@@ -1,6 +1,10 @@
 package task_runner
 
-import "fmt"
+import (
+	"os"
+	"os/exec"
+	"strings"
+)
 
 type InlineShellRunnerTask struct {
 	Name        string
@@ -33,8 +37,16 @@ func NewInlineShellRunnerTask(task *YamlTask) *InlineShellRunnerTask {
 }
 
 func (task *InlineShellRunnerTask) Execute() error {
-	fmt.Printf("%s\n", task.Command)
-	return nil // TODO replace with actual content
+	//fmt.Printf("%s\n", task.Command)
+	cmd := exec.Command(task.ShellRunner)
+	cmd.Stdin = strings.NewReader(task.Command)
+
+	//var out bytes.Buffer
+	cmd.Stdout = os.Stdout
+
+	err := cmd.Run()
+
+	return err // replace by custom error
 }
 
 func (task *InlineShellRunnerTask) Validate() error {
