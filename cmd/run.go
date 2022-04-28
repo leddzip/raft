@@ -14,8 +14,12 @@ var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "run a user define job",
 	Long:  `Run a user define job from the 'raft' script folder.`,
+	Args:  cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		command_bridge.Run()
+		err := command_bridge.Run(args[0])
+		if err != nil {
+			panic(err.Error())
+		}
 	},
 }
 

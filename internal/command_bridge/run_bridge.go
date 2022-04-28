@@ -1,30 +1,44 @@
 package command_bridge
 
 import (
-	"fmt"
-	"github.com/leddzip/raft/internal/service"
-	"log"
+	"github.com/leddzip/raft/internal/script_folder"
+	"github.com/leddzip/raft/internal/task_runner"
 )
 
-func Run() {
+func Run(targetName string) error {
 
-	// ======================================================================
-	// Assert we are in a Raft manged folder in order to execute this command
-	inRaftManagedFolder, err := service.IsInRaftManagedFolder()
+	// Assert we are in a folder managed by the application
+	scriptFolder, err := script_folder.GetAppManagedFolder("raft", ".", "/")
 	if err != nil {
-		log.Fatal(err.Error())
+		return err // to replace with an actual error that illustrate an issue while running the application
 	}
 
-	if !inRaftManagedFolder {
-		log.Fatal("You are not currently inside a raft managed folder.")
-	}
-
-	// =====================================================================
-	// do something since the first assertion succeeded
-	raftScriptFolderLocation, err := service.GetRaftManagedFolder()
+	// Retrieve candidate
+	allCandidates, err := script_folder.GetAllCandidates(scriptFolder)
 	if err != nil {
-		log.Fatal(err.Error())
+		return err
 	}
-	fmt.Printf("Raft script folder location: %s", raftScriptFolderLocation)
 
+	runnerCandidate, err := script_folder.GetCandidateWithContentIfExist(allCandidates, targetName)
+	if err != nil {
+		return err
+	}
+
+	// Infer correct Job from candidate
+	job, err := task_runner.Parse(runnerCandidate.Content)
+	if err != nil {
+		return err
+	}
+
+	err = job.Run()
+	if err != nil {
+		return err
+	}
+
+	// Run the job
+	return nil
+}
+
+func getCandidate(candidateName string) (*script_folder.CandidateWithContent, error) {
+	return nil, nil
 }
