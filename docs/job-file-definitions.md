@@ -40,7 +40,13 @@
   - this is **optional**
   - this is in conflict with **source**
   - one of `source` or `command` is **mandatory**
-- `use-current-dir`: default to `false` and use the project root dir
+- `execute-in-current-dir`: default to `false` and use the project root dir
   - if set to `true` will use the current dir for the task execution
   - this is **optional** since it default to `false`
-- 
+- `default`: if there is multiple default available for this kind or Task, then give 
+   the name of the profile to use
+  - this is **optional** unless an ambiguity is possible
+- `termination-condition`: *manual* or *automatic*
+  - default value is `automatic`
+  - this is hence **optional** since a default is possible
+- `profiles`: a list of profile object that can be used to inject parameters into the different builds
