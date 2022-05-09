@@ -10,7 +10,7 @@
 - `type`: 3 possible values: `sequential`, `parallel`, `orchestrator`
   - this is **optional** since hte default value (if not provided) is `sequential`
   - for now, the `orchestrator` value can be ignored since it won't be implemented soon.
-    It could also become a more *cicrcle ci* like approach (all parallel, just put *require*
+    It could also become a more *circle ci* like approach (all parallel, just put *require*
     to let the user define himself what kind of workflow is expected)
 - `default`: define a list of setup that can be shared among different tasks.
   - this is a list of default. Each default has either:

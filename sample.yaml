@@ -1,0 +1,44 @@
+version: 1
+name: My script name (optional)
+description: |
+  (optional)
+  A somewhat longer description than just the name.
+  It can be on multiple line, not really important actually,
+  just for you to remember what is the purpose of this job
+type: sequential || parallel || orchestrator
+profiles:
+  - profile 1
+  - profile 2
+default:
+  - name: bash 1
+    interpreter: /bin/bash
+  - name: docker 1
+    docker:
+      credential:
+        username: me name
+        password: me pass
+      registry: some specific docker registry
+      image: my-image:latest
+tasks:
+  - name: Job name (mandatory)
+    interpreter: /bin/bash
+    source: /a/specific/path/can/be/relative/to/project/dir
+    docker:
+      credential:
+        username: me name
+        password: me pass
+      registry: default to docker hub
+      image: my-image:latest
+    execute-in-current-dir: true
+    default: bash 1
+    job: job name as in the file name without the extension
+    require:
+      - Job name 1
+      - Job name 2
+    command: |
+      # mandatory
+      echo "this is a command"
+      touch this
+      echo "this is a content" >> this
+      cat this
+    termination-condition: manual | automatic (default)
